@@ -21,15 +21,19 @@ from sklearn.ensemble import VotingClassifier
 # Create your views here.
 from Remote_User.models import ClientRegister_Model,Cyberbullying_Detection_Type,detection_ratio,detection_accuracy
 
+import os
 
 def serviceproviderlogin(request):
-    if request.method  == "POST":
+    if request.method == "POST":
         admin = request.POST.get('username')
         password = request.POST.get('password')
-        if admin == "Admin" and password =="Admin":
+
+        if admin == os.environ.get("ADMIN_USERNAME") and password == os.environ.get("ADMIN_PASSWORD"):
             return redirect('View_Remote_Users')
 
-    return render(request,'SProvider/serviceproviderlogin.html')
+    return render(request, 'SProvider/serviceproviderlogin.html')
+
+
 
 def Find_Predicted_Cyberbullying_Detection_Ratio(request):
     detection_ratio.objects.all().delete()
