@@ -1,6 +1,7 @@
 from django.db.models import Count
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.hashers import make_password, check_password
 import datetime
 import openpyxl
 
@@ -30,11 +31,12 @@ def login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         try:
-            enter = ClientRegister_Model.objects.get(username=username,password=password)
-            request.session["userid"] = enter.id
+            enter = ClientRegister_Model.objects.get(username=username)
+            if check_password(password, enter.password):
+             request.session["userid"] = enter.id
 
-            return redirect('ViewYourProfile')
-        except:
+             return redirect('ViewYourProfile')
+        except ClientRegister_Model.DoesNotExist:
             pass
 
     return render(request,'RUser/login.html')
@@ -51,8 +53,8 @@ def Register1(request):
         city = request.POST.get('city')
         address = request.POST.get('address')
         gender = request.POST.get('gender')
-        ClientRegister_Model.objects.create(username=username, email=email, password=password, phoneno=phoneno,
-                                            country=country, state=state, city=city, address=address, gender=gender)
+        ClientRegister_Model.objects.create(username=username, email=email, password=make_password(password), phoneno=phoneno,
+                                    country=country, state=state, city=city, address=address, gender=gender)
         obj = "Registered Successfully"
         return render(request, 'RUser/Register1.html', {'object': obj})
     else:
