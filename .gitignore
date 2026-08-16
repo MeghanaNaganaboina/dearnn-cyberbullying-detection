@@ -9,3 +9,5 @@ env/
 .idea/
 *.log
 settings_backup.py
+Results.csv
+
